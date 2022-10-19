@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Button,
   TextField,
@@ -12,6 +12,7 @@ import { Assignment, Phone, PhoneDisabled } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { SocketContext } from '../../Context';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +50,11 @@ const Sidebar = ({ children }) => {
     useContext(SocketContext);
   const [idToCall, setIdToCall] = useState('');
   const classes = useStyles();
+  const username = useSelector((state) => state.auth.username);
+
+  useEffect(() => {
+    setName(username);
+  }, []);
 
   return (
     <Container className={classes.container}>
