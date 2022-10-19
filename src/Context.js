@@ -1,25 +1,21 @@
 import React, { createContext, useState, useRef, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import Peer from 'simple-peer';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const SocketContext = createContext();
 
-// const socket = io('http://localhost:5000');
 const socket = io('https://warm-wildwood-81069.herokuapp.com');
 
 const ContextProvider = ({ children }) => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const username = useSelector((state) => state.auth.username);
-  console.log('inside context provider', username);
+  const username = useSelector((state) => state.auth.isAuthenticated);
 
-  console.log(isAuthenticated, username);
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(username);
   const [call, setCall] = useState({});
-  const [me, setMe] = useState(username);
+  const [me, setMe] = useState('');
 
   const myVideo = useRef();
   const userVideo = useRef();
@@ -34,12 +30,12 @@ const ContextProvider = ({ children }) => {
         myVideo.current.srcObject = currentStream;
       });
 
-    socket.on('me', (id) => setMe(username));
+    socket.on('me', (id) => setMe(id));
 
     socket.on('callUser', ({ from, name: callerName, signal }) => {
       setCall({ isReceivingCall: true, from, name: callerName, signal });
     });
-  }, [username]);
+  }, []);
 
   const answerCall = () => {
     setCallAccepted(true);
