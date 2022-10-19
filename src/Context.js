@@ -11,6 +11,7 @@ const socket = io('https://warm-wildwood-81069.herokuapp.com');
 const ContextProvider = ({ children }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const username = useSelector((state) => state.auth.username);
+  console.log('inside context provider', username);
 
   console.log(isAuthenticated, username);
   const [callAccepted, setCallAccepted] = useState(false);

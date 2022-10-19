@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Typography, AppBar } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import VideoPlayer from './VideoPlayer';
 import Sidebar from './Sidebar';
 import Notifications from './Notifications';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { authActions } from '../../store';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -33,11 +36,22 @@ const useStyles = makeStyles((theme) => ({
 
 const VideoChat = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const authtoken = localStorage.getItem('authtoken');
+    const username = localStorage.getItem('username');
+    if (authtoken != null) {
+      dispatch(authActions.login({ authtoken, username }));
+    }
+  });
 
   return (
     <div className={classes.wrapper}>
-      <AppBar className={classes.appBar} position="static" color="inherit">
-        <Typography variant="h2" align="center">
+      <AppBar className={classes.appBar} position='static' color='inherit'>
+        <Typography variant='h2' align='center'>
           Ansuni Baat
         </Typography>
       </AppBar>
