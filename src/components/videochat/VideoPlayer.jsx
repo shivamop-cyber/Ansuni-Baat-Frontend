@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Grid, Typography, Paper, makeStyles } from '@material-ui/core';
 
 import { SocketContext } from '../../Context';
+import { useSelector, useDispatch } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   video: {
@@ -24,16 +25,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const VideoPlayer = () => {
-  const { name, callAccepted, myVideo, userVideo, callEnded, stream, call } = useContext(SocketContext);
+  const { name, callAccepted, myVideo, userVideo, callEnded, stream, call } =
+    useContext(SocketContext);
   const classes = useStyles();
+
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const username = useSelector((state) => state.auth.username);
+
+  console.log(isAuthenticated, username);
 
   return (
     <Grid container className={classes.gridContainer}>
       {stream && (
         <Paper className={classes.paper}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h5" gutterBottom>
-              {name || 'Name'}
+            <Typography variant='h5' gutterBottom>
+              {username || 'Name'}
             </Typography>
             <video
               playsInline
@@ -48,7 +55,7 @@ const VideoPlayer = () => {
       {callAccepted && !callEnded && (
         <Paper className={classes.paper}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant='h5' gutterBottom>
               {call.name || 'Name'}
             </Typography>
             <video

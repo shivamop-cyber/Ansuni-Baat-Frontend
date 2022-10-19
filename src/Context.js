@@ -1,6 +1,7 @@
 import React, { createContext, useState, useRef, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import Peer from 'simple-peer';
+import { useSelector, useDispatch } from 'react-redux';
 
 const SocketContext = createContext();
 
@@ -8,31 +9,36 @@ const SocketContext = createContext();
 const socket = io('https://warm-wildwood-81069.herokuapp.com');
 
 const ContextProvider = ({ children }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const username = useSelector((state) => state.auth.username);
+
+  console.log(isAuthenticated, username);
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();
   const [name, setName] = useState('');
   const [call, setCall] = useState({});
-  const [me, setMe] = useState('');
+  const [me, setMe] = useState(username);
 
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
 
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
 
         myVideo.current.srcObject = currentStream;
       });
 
-    socket.on('me', (id) => setMe(id));
+    socket.on('me', (id) => setMe(username));
 
     socket.on('callUser', ({ from, name: callerName, signal }) => {
       setCall({ isReceivingCall: true, from, name: callerName, signal });
     });
-  }, []);
+  }, [username]);
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -56,7 +62,12 @@ const ContextProvider = ({ children }) => {
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     peer.on('signal', (data) => {
-      socket.emit('callUser', { userToCall: id, signalData: data, from: me, name });
+      socket.emit('callUser', {
+        userToCall: id,
+        signalData: data,
+        from: me,
+        name,
+      });
     });
 
     peer.on('stream', (currentStream) => {
@@ -81,20 +92,21 @@ const ContextProvider = ({ children }) => {
   };
 
   return (
-    <SocketContext.Provider value={{
-      call,
-      callAccepted,
-      myVideo,
-      userVideo,
-      stream,
-      name,
-      setName,
-      callEnded,
-      me,
-      callUser,
-      leaveCall,
-      answerCall,
-    }}
+    <SocketContext.Provider
+      value={{
+        call,
+        callAccepted,
+        myVideo,
+        userVideo,
+        stream,
+        name,
+        setName,
+        callEnded,
+        me,
+        callUser,
+        leaveCall,
+        answerCall,
+      }}
     >
       {children}
     </SocketContext.Provider>
