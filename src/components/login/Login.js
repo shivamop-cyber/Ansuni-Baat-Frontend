@@ -23,7 +23,7 @@ const Login = () => {
   const [isEnabled, setIsEnabled] = useState(true);
 
   const navigate = useNavigate();
-  const baseURL = 'https://secure-coast-11315.herokuapp.com/api';
+  const baseURL = 'http://localhost:8000/api';
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
 
@@ -79,12 +79,13 @@ const Login = () => {
       axios
         .post(`${baseURL}/auth/signup`, data)
         .then((response) => {
+          console.log(response);
           setIsAuthenticating(false);
         })
         .catch(function (error) {
           setIsAuthenticating(false);
           setOpen(true);
-          console.log(error);
+          console.log('Error happened', error);
         });
     }
   };

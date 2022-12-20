@@ -32,6 +32,22 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     width: '100%',
   },
+  float: {
+    position: 'fixed',
+    width: '70px',
+    height: '40px',
+    top: '40px',
+    right: '40px',
+    backgroundColor: '#303F9F',
+    color: '#FFF',
+    borderRadius: '5px',
+    textAlign: 'center',
+    boxShadow: '1px 1px 2px #999',
+    cursor: 'pointer',
+  },
+  myFloat: {
+    marginTop: '10px',
+  },
 }));
 
 const VideoChat = () => {
@@ -48,8 +64,18 @@ const VideoChat = () => {
     }
   });
 
+  const logoutHandler = () => {
+    localStorage.removeItem('authtoken');
+    localStorage.removeItem('username');
+    dispatch(authActions.logout());
+    navigate('/');
+  };
+
   return (
     <div className={classes.wrapper}>
+      <div class={classes.float} onClick={logoutHandler}>
+        <p className={classes.myFloat}>Logout</p>
+      </div>
       <AppBar className={classes.appBar} position='static' color='inherit'>
         <Typography variant='h2' align='center'>
           Ansuni Baat

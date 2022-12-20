@@ -15,6 +15,11 @@ const authSlice = createSlice({
       state.authtoken = action.payload.authtoken;
       state.username = action.payload.username;
     },
+    logout(state, action) {
+      state.isAuthenticated = false;
+      state.authtoken = '';
+      state.username = '';
+    },
   },
 });
 
